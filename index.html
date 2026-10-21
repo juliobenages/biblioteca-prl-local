@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173c35">
+  <meta name="description" content="Biblioteca documental de prevención de riesgos laborales, diseñada para trabajar localmente en tu dispositivo.">
+  <title>Biblioteca PRL Local</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Biblioteca PRL Local, inicio">
+      <span class="brand-mark" aria-hidden="true">PRL</span>
+      <span><strong>Biblioteca PRL</strong><small>LOCAL · PRIVADA EN TU DISPOSITIVO</small></span>
+    </a>
+    <span class="offline-pill"><span class="status-dot"></span><span id="connectionStatus">Comprobando conexión…</span></span>
+  </header>
+
+  <main class="page">
+    <section class="intro">
+      <p class="eyebrow">TU ESPACIO DE TRABAJO</p>
+      <h1>Prevención, con tus documentos a mano.</h1>
+      <p class="intro-copy">Organiza normativa, NTP, procedimientos y documentación técnica en una biblioteca pensada para consultar desde el iPad.</p>
+      <div class="privacy-note"><span aria-hidden="true">🔒</span><span><strong>Almacenamiento local</strong><br>Los archivos que importes se guardan en este navegador, en este dispositivo.</span></div>
+    </section>
+
+    <section class="panel" aria-labelledby="importTitle">
+      <div class="section-heading">
+        <div><p class="eyebrow">PASO 1</p><h2 id="importTitle">Añadir documentos</h2></div>
+        <span class="count" id="documentCount">0 archivos</span>
+      </div>
+      <label class="dropzone" for="fileInput" id="dropzone">
+        <span class="upload-icon" aria-hidden="true">↑</span>
+        <strong>Selecciona documentos para importar</strong>
+        <span>PDF, TXT, Markdown, HTML y otros archivos</span>
+        <span class="select-button">Elegir archivos</span>
+        <input id="fileInput" type="file" multiple accept=".pdf,.txt,.md,.markdown,.html,.htm,.doc,.docx,.odt,.rtf,.csv,.json,.xml,.jpg,.jpeg,.png">
+      </label>
+      <p class="small-note">En esta primera versión guardamos los archivos localmente. Todavía no se extrae el texto ni se analizan los documentos.</p>
+      <p id="importMessage" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="libraryTitle">
+      <div class="section-heading">
+        <div><p class="eyebrow">TU ARCHIVO</p><h2 id="libraryTitle">Mi biblioteca</h2></div>
+        <button class="text-button" id="refreshButton" type="button">Actualizar lista</button>
+      </div>
+      <div class="toolbar">
+        <label class="searchbox"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Buscar por nombre…" autocomplete="off"></label>
+        <select id="typeFilter" aria-label="Filtrar por tipo de archivo">
+          <option value="all">Todos los tipos</option>
+          <option value="pdf">PDF</option>
+          <option value="text">Texto y web</option>
+          <option value="other">Otros</option>
+        </select>
+      </div>
+      <div id="emptyState" class="empty-state"><span aria-hidden="true">▤</span><strong>Tu biblioteca está vacía</strong><p>Importa tu primer documento para empezar.</p></div>
+      <ul id="documentList" class="document-list" aria-label="Documentos guardados"></ul>
+    </section>
+
+    <section class="assistant-preview">
+      <div class="assistant-icon" aria-hidden="true">✳</div>
+      <div><p class="eyebrow">SIGUIENTE FASE</p><h2>Asistente PRL con IA local</h2><p>Prepararemos la búsqueda dentro de los documentos y las respuestas con referencias verificables. Esta función aún no está activada.</p><span class="coming-soon">En preparación</span></div>
+    </section>
+
+    <footer><span>Biblioteca PRL Local</span><span id="storageStatus">Preparando almacenamiento…</span></footer>
+  </main>
+  <script src="./app.js" defer></script>
+</body>
+</html>
