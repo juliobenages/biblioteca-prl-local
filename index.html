@@ -39,7 +39,7 @@
         <span class="select-button">Elegir archivos</span>
         <input id="fileInput" type="file" multiple accept=".pdf,.txt,.md,.markdown,.html,.htm,.doc,.docx,.odt,.rtf,.csv,.json,.xml,.jpg,.jpeg,.png">
       </label>
-      <p class="small-note">En esta primera versión guardamos los archivos localmente. Todavía no se extrae el texto ni se analizan los documentos.</p>
+      <p class="small-note">El texto de TXT, Markdown, HTML, CSV, JSON y XML se extrae localmente. La lectura de PDF y otros formatos se incorporará en siguientes pasos.</p>
       <p id="importMessage" class="message" role="status" aria-live="polite"></p>
     </section>
 
@@ -49,7 +49,7 @@
         <button class="text-button" id="refreshButton" type="button">Actualizar lista</button>
       </div>
       <div class="toolbar">
-        <label class="searchbox"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Buscar por nombre…" autocomplete="off"></label>
+        <label class="searchbox"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Buscar por nombre o contenido…" autocomplete="off"></label>
         <select id="typeFilter" aria-label="Filtrar por tipo de archivo">
           <option value="all">Todos los tipos</option>
           <option value="pdf">PDF</option>
@@ -68,6 +68,7 @@
 
     <footer><span>Biblioteca PRL Local</span><span id="storageStatus">Preparando almacenamiento…</span></footer>
   </main>
+  <script src="./text-extractor.js" defer></script>
   <script src="./app.js" defer></script>
 </body>
 </html>
