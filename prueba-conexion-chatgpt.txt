@@ -1,0 +1,1 @@
+Prueba temporal de permisos de escritura de ChatGPT. Este archivo se eliminará si la prueba funciona.
