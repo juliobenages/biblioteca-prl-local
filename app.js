@@ -59,9 +59,25 @@
   };
   const safeText = value => String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
   const labelFor = ext => ext.length > 5 ? ext.slice(0, 5).toUpperCase() : ext.toUpperCase();
+  const textStatusLabel = status => ({
+    ready: "Texto extraído",
+    empty: "Sin texto extraíble",
+    pending: "PDF: lectura pendiente",
+    unsupported: "Formato pendiente",
+    error: "Error al extraer texto"
+  }[status] || "Sin analizar");
 
   async function loadDocuments() {
     documents = await allDocuments();
+    // Backfill text for compatible files already saved by older app versions.
+    for (const doc of documents) {
+      if (!doc.textStatus && window.PRLTextExtractor && window.PRLTextExtractor.supports(doc.name) && doc.blob) {
+        const extracted = await window.PRLTextExtractor.extract(new File([doc.blob], doc.name, { type: doc.type || "" }));
+        const updated = { ...doc, textContent: extracted.text, textStatus: extracted.status };
+        await transaction("readwrite", store => store.put(updated));
+        Object.assign(doc, updated);
+      }
+    }
     documents.sort((a, b) => b.addedAt - a.addedAt);
     render();
     storageStatus.textContent = "Almacenamiento local activo";
@@ -71,9 +87,10 @@
     const query = searchInput.value.trim().toLocaleLowerCase("es");
     const selectedType = typeFilter.value;
     const visible = documents.filter(doc => {
-      const matchesName = doc.name.toLocaleLowerCase("es").includes(query);
+      const searchable = (doc.name + " " + (doc.textContent || "")).toLocaleLowerCase("es");
+      const matchesNameOrContent = searchable.includes(query);
       const matchesType = selectedType === "all" || doc.category === selectedType;
-      return matchesName && matchesType;
+      return matchesNameOrContent && matchesType;
     });
     documentCount.textContent = documents.length + (documents.length === 1 ? " archivo" : " archivos");
     documentList.replaceChildren();
@@ -91,7 +108,7 @@
       li.className = "document-item";
       li.innerHTML = `<span class="file-icon" aria-hidden="true">${safeText(labelFor(extension(doc.name)))}</span>
         <div class="file-details"><div class="file-name">${safeText(doc.name)}</div>
-        <div class="file-meta">${formatSize(doc.size)} · Añadido el ${formatDate(doc.addedAt)}</div></div>
+        <div class="file-meta">${formatSize(doc.size)} · Añadido el ${formatDate(doc.addedAt)} · ${textStatusLabel(doc.textStatus)}</div></div>
         <div class="file-actions"><button type="button" class="action-button open" data-id="${safeText(doc.id)}">Abrir</button><button type="button" class="action-button delete" data-id="${safeText(doc.id)}">Eliminar</button></div>`;
       documentList.appendChild(li);
     }
@@ -106,9 +123,13 @@
     for (const file of files) {
       try {
         const id = (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2));
+        const extracted = window.PRLTextExtractor
+          ? await window.PRLTextExtractor.extract(file)
+          : { text: "", status: "error" };
         await transaction("readwrite", store => store.put({
           id, name: file.name, size: file.size, type: file.type || "application/octet-stream",
-          category: category(file), addedAt: Date.now(), blob: file
+          category: category(file), addedAt: Date.now(), blob: file,
+          textContent: extracted.text, textStatus: extracted.status
         }));
         saved++;
       } catch (error) {
